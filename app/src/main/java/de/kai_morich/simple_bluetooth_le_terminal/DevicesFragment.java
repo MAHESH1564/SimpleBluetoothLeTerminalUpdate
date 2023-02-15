@@ -123,7 +123,7 @@ public class DevicesFragment extends ListFragment {
                 return view;
             }
         };
-        if(bluetoothAdapter == null) {
+        /*if(bluetoothAdapter == null) {
             setEmptyText("<bluetooth LE not supported>");
         } else if(!bluetoothAdapter.isEnabled()) {
             if(menu!=null)
@@ -140,7 +140,7 @@ public class DevicesFragment extends ListFragment {
             setEmptyText("<use SCAN to refresh devices>");
             if (menu != null)
                 menu.findItem(R.id.ble_scan).setEnabled(true);
-        }
+        }*/
 
     }
 
@@ -174,7 +174,7 @@ public class DevicesFragment extends ListFragment {
         if(bluetoothAdapter == null) {
             setEmptyText("<bluetooth LE not supported>");
         } else if(!bluetoothAdapter.isEnabled()) {
-            if(menu!=null)
+            if(menu != null)
                 menu.findItem(R.id.ble_scan).setEnabled(false);
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
