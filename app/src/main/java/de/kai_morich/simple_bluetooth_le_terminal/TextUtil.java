@@ -70,7 +70,7 @@ final class TextUtil {
     }
 
     /**
-     * use https://en.wikipedia.org/wiki/Caret_notation to avoid invisible control characters
+     * use <a href="https://en.wikipedia.org/wiki/Caret_notation">...</a> to avoid invisible control characters
      */
     static CharSequence toCaretString(CharSequence s, boolean keepNewline) {
         return toCaretString(s, keepNewline, s.length());

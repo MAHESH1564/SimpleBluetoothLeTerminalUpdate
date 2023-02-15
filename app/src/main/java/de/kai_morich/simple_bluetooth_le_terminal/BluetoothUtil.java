@@ -68,8 +68,8 @@ public class BluetoothUtil {
     static boolean hasPermissions(Fragment fragment, ActivityResultLauncher<String[]> requestPermissionLauncher) {
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.S)
             return true;
-        boolean missingPermissions = fragment.getActivity().checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED
-                                   | fragment.getActivity().checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED;
+        boolean missingPermissions = fragment.requireActivity().checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED
+                                   | fragment.requireActivity().checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED;
         boolean showRationale = fragment.shouldShowRequestPermissionRationale(Manifest.permission.BLUETOOTH_CONNECT)
                               | fragment.shouldShowRequestPermissionRationale(Manifest.permission.BLUETOOTH_SCAN);
         String[] permissions = new String[]{Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN};
