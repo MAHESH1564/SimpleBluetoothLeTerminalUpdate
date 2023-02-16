@@ -15,6 +15,7 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.method.ScrollingMovementMethod;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -55,6 +56,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         setRetainInstance(true);
+        assert getArguments() != null;
         deviceAddress = getArguments().getString("device");
     }
 
@@ -62,7 +64,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     public void onDestroy() {
         if (connected != Connected.False)
             disconnect();
-        getActivity().stopService(new Intent(getActivity(), SerialService.class));
+        requireActivity().stopService(new Intent(getActivity(), SerialService.class));
         super.onDestroy();
     }
 
@@ -72,12 +74,12 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         if(service != null)
             service.attach(this);
         else
-            getActivity().startService(new Intent(getActivity(), SerialService.class)); // prevents service destroy on unbind from recreated activity caused by orientation change
+            requireActivity().startService(new Intent(getActivity(), SerialService.class)); // prevents service destroy on unbind from recreated activity caused by orientation change
     }
 
     @Override
     public void onStop() {
-        if(service != null && !getActivity().isChangingConfigurations())
+        if(service != null && !requireActivity().isChangingConfigurations())
             service.detach();
         super.onStop();
     }
@@ -86,12 +88,12 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     @Override
     public void onAttach(@NonNull Activity activity) {
         super.onAttach(activity);
-        getActivity().bindService(new Intent(getActivity(), SerialService.class), this, Context.BIND_AUTO_CREATE);
+        requireActivity().bindService(new Intent(getActivity(), SerialService.class), this, Context.BIND_AUTO_CREATE);
     }
 
     @Override
     public void onDetach() {
-        try { getActivity().unbindService(this); } catch(Exception ignored) {}
+        try { requireActivity().unbindService(this); } catch(Exception ignored) {}
         super.onDetach();
     }
 
@@ -100,7 +102,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         super.onResume();
         if(initialStart && service != null) {
             initialStart = false;
-            getActivity().runOnUiThread(this::connect);
+            requireActivity().runOnUiThread(this::connect);
         }
     }
 
@@ -110,7 +112,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         service.attach(this);
         if(initialStart && isResumed()) {
             initialStart = false;
-            getActivity().runOnUiThread(this::connect);
+            requireActivity().runOnUiThread(this::connect);
         }
     }
 
@@ -185,7 +187,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
             BluetoothDevice device = bluetoothAdapter.getRemoteDevice(deviceAddress);
             status("connecting...");
             connected = Connected.Pending;
-            SerialSocket socket = new SerialSocket(getActivity().getApplicationContext(), device);
+            SerialSocket socket = new SerialSocket(requireActivity().getApplicationContext(), device);
             service.connect(socket);
         } catch (Exception e) {
             onSerialConnectError(e);
@@ -250,6 +252,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
             }
         }
         receiveText.append(spn);
+        Log.d("data", String.valueOf(spn));
     }
 
     private void status(String str) {
