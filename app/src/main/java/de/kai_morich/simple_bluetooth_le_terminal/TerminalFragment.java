@@ -15,7 +15,6 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.method.ScrollingMovementMethod;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,7 +28,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayDeque;
+import java.lang.String;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Objects;
+
+import com.opencsv.CSVWriter;
 
 public class TerminalFragment extends Fragment implements ServiceConnection, SerialListener {
 
@@ -48,6 +56,11 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     private boolean pendingNewline = false;
     private String newline = TextUtil.newline_crlf;
 
+    //private int counter = requireContext().fileList().length;
+
+    private CSVWriter accel_data = null;
+
+    Collection<String[]> accelerometerData = new ArrayList<>();
     /*
      * Lifecycle
      */
@@ -82,6 +95,12 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         if(service != null && !requireActivity().isChangingConfigurations())
             service.detach();
         super.onStop();
+        try {
+            accel_data.writeAll(accelerometerData);
+            accel_data.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @SuppressWarnings("deprecation") // onAttach(context) was added with API 23. onAttach(activity) works for all API versions
@@ -103,6 +122,11 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         if(initialStart && service != null) {
             initialStart = false;
             requireActivity().runOnUiThread(this::connect);
+            try {
+                accel_data.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -182,6 +206,14 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
      * Serial + UI
      */
     private void connect() {
+        int counter = requireContext().fileList().length;
+        FileWriter file = null;
+        try {
+            file = new FileWriter(requireContext().getFilesDir() + "/accel_data" + counter++ + ".csv");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        accel_data = new CSVWriter(file);
         try {
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             BluetoothDevice device = bluetoothAdapter.getRemoteDevice(deviceAddress);
@@ -189,6 +221,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
             connected = Connected.Pending;
             SerialSocket socket = new SerialSocket(requireActivity().getApplicationContext(), device);
             service.connect(socket);
+
         } catch (Exception e) {
             onSerialConnectError(e);
         }
@@ -252,7 +285,9 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
             }
         }
         receiveText.append(spn);
-        Log.d("data", String.valueOf(spn));
+        accelerometerData.add (new String[] {String.valueOf(spn)});
+        //accel_data.writeNext(new String[] {String.valueOf(spn)});
+        //Log.d("data", String.valueOf(spn));
     }
 
     private void status(String str) {
@@ -292,5 +327,6 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         status("connection lost: " + e.getMessage());
         disconnect();
     }
+
 
 }
