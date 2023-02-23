@@ -58,6 +58,8 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 
     //private int counter = requireContext().fileList().length;
 
+    String test = null;
+
     private CSVWriter accel_data = null;
 
     Collection<String[]> accelerometerData = new ArrayList<>();
@@ -96,7 +98,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
             service.detach();
         super.onStop();
         try {
-            accel_data.writeAll(accelerometerData);
+            //accel_data.writeAll(accelerometerData);
             accel_data.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -207,9 +209,11 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
      */
     private void connect() {
         int counter = requireContext().fileList().length;
+        //String test = String.valueOf(requireContext().getFilesDir());
         FileWriter file = null;
         try {
-            file = new FileWriter(requireContext().getFilesDir() + "/accel_data" + counter++ + ".csv");
+            file = new FileWriter(requireContext().getFilesDir() + "/accel_data" + counter + ".csv");
+            counter++;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -282,10 +286,18 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
                     pendingNewline = msg.charAt(msg.length() - 1) == '\r';
                 }
                 spn.append(TextUtil.toCaretString(msg, newline.length() != 0));
+                if (msg.charAt(msg.length()-1)=='\n') {
+                    test = test.concat(msg);
+                    accel_data.writeNext(new String[] {test});
+                    test = null;
+                }
+                else {
+                    test = (msg);
+                }
             }
         }
         receiveText.append(spn);
-        accelerometerData.add (new String[] {String.valueOf(spn)});
+        //accelerometerData.add (new String[] {String.valueOf(spn)});
         //accel_data.writeNext(new String[] {String.valueOf(spn)});
         //Log.d("data", String.valueOf(spn));
     }
