@@ -11,5 +11,8 @@
     <string name="location_permission_denied">As location permission has not been granted, this app cannot scan for Bluetooth LE devices.</string>
 
     <string name="pairing_request">PAIRING requested\n-> Perform pairing steps. Connect again</string>
+    <string name="scan">SCAN</string>
+    <string name="stop">STOP</string>
+    <string name="bluetooth_settings">Bluetooth settings</string>
 
 </resources>

@@ -16,7 +16,6 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.method.ScrollingMovementMethod;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,16 +29,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.opencsv.CSVWriter;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayDeque;
-import java.lang.String;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Objects;
-
-import com.opencsv.CSVWriter;
 
 public class TerminalFragment extends Fragment implements ServiceConnection, SerialListener {
 
@@ -64,7 +60,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 
     private CSVWriter accel_data = null;
 
-    Collection<String[]> accelerometerData = new ArrayList<>();
+
     /*
      * Lifecycle
      */
@@ -210,13 +206,18 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
      * Serial + UI
      */
     private void connect() {
-        String folder_name = Environment.getExternalStorageDirectory().getPath() +"/train_data";
+        boolean req=false;
+        //String folder_name = Environment.getExternalStorageDirectory().getPath() +"/train_data";
+         String folder_name = requireActivity().getExternalFilesDir(Environment.MEDIA_SHARED).getPath();
         File  folder = new File(folder_name);
         if(!folder.exists())
-            folder.mkdirs();
+             req = folder.mkdirs();
+        if(!req){
+            Toast.makeText(service, "The Storage location cannot be created the app might crash", Toast.LENGTH_SHORT).show();
+        }
 
-        FileWriter file = null;
-        int counter=Integer.parseInt(String.valueOf(folder.listFiles().length));
+        FileWriter file;
+        int counter=Integer.parseInt(String.valueOf(Objects.requireNonNull(folder.listFiles()).length));
         try {
             file = new FileWriter( folder + "/accel_data" + counter + ".csv");
             counter++;
@@ -305,9 +306,6 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
             }
         }
         receiveText.append(spn);
-        //accelerometerData.add (new String[] {String.valueOf(spn)});
-        //accel_data.writeNext(new String[] {String.valueOf(spn)});
-        //Log.d("data", String.valueOf(spn));
     }
 
     private void status(String str) {

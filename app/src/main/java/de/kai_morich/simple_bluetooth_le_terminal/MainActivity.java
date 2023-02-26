@@ -93,8 +93,6 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
 
         }
         if (!PermissionsTORequest.isEmpty()) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 Snackbar.make(mLayout, "Need To store files",
                         Snackbar.LENGTH_INDEFINITE).setAction("OK", view -> {
                     // Request the permission
@@ -103,10 +101,8 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
                             40);
                 }).show();
 
-
             }
         }
-    }
     @Override
     public void onBackStackChanged() {
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(getSupportFragmentManager().getBackStackEntryCount()>0);
