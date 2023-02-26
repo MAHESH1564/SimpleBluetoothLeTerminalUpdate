@@ -9,12 +9,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.IBinder;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.method.ScrollingMovementMethod;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -208,11 +210,11 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
      * Serial + UI
      */
     private void connect() {
-        int counter = requireContext().fileList().length;
-        //String test = String.valueOf(requireContext().getFilesDir());
+        String test = String.valueOf(requireContext().getFilesDir());
         FileWriter file = null;
+        int counter=Integer.parseInt(String.valueOf(requireContext().getFilesDir().listFiles().length));
         try {
-            file = new FileWriter(requireContext().getFilesDir() + "/accel_data" + counter + ".csv");
+            file = new FileWriter(test + "/accel_data" + counter + ".csv");
             counter++;
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -287,7 +289,9 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
                 }
                 spn.append(TextUtil.toCaretString(msg, newline.length() != 0));
                 if (msg.charAt(msg.length()-1)=='\n') {
+
                     test = test.concat(msg);
+                    test = test.replace(TextUtil.newline_lf,".");
                     accel_data.writeNext(new String[] {test});
                     test = null;
                 }
