@@ -1,31 +1,36 @@
 package de.kai_morich.simple_bluetooth_le_terminal;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentManager;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import android.Manifest;
-
-import android.content.pm.PackageManager;
-
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
+
 import com.google.android.material.snackbar.Snackbar;
+
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements FragmentManager.OnBackStackChangedListener, ActivityCompat.OnRequestPermissionsResultCallback {
 
     private View mLayout;
+    private boolean readPermissionGranted = false;
+    private boolean writePermissionGranted= false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mLayout = findViewById(R.id.fragment);
         requestBluetoothPermissions();
+        updateOrRequestPermission();
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportFragmentManager().addOnBackStackChangedListener(this);
@@ -68,6 +73,37 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 4);
+            }
+        }
+    }
+    private void updateOrRequestPermission() {
+        boolean hasReadPermission = ContextCompat.checkSelfPermission(
+                this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        boolean hasWritePermission = ContextCompat.checkSelfPermission(
+                this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        boolean minSDK29 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q;
+        readPermissionGranted = hasReadPermission;
+        writePermissionGranted = hasWritePermission;
+        ArrayList PermissionsTORequest = new ArrayList<String>();
+        if (!writePermissionGranted) {
+            PermissionsTORequest.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if (!readPermissionGranted) {
+            PermissionsTORequest.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+
+        }
+        if (!PermissionsTORequest.isEmpty()) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                Snackbar.make(mLayout, "Need To store files",
+                        Snackbar.LENGTH_INDEFINITE).setAction("OK", view -> {
+                    // Request the permission
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            40);
+                }).show();
+
+
             }
         }
     }

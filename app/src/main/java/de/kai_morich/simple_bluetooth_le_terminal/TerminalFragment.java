@@ -210,11 +210,15 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
      * Serial + UI
      */
     private void connect() {
-        String test = String.valueOf(requireContext().getFilesDir());
+        String folder_name = Environment.getExternalStorageDirectory().getPath() +"/train_data";
+        File  folder = new File(folder_name);
+        if(!folder.exists())
+            folder.mkdirs();
+
         FileWriter file = null;
-        int counter=Integer.parseInt(String.valueOf(requireContext().getFilesDir().listFiles().length));
+        int counter=Integer.parseInt(String.valueOf(folder.listFiles().length));
         try {
-            file = new FileWriter(test + "/accel_data" + counter + ".csv");
+            file = new FileWriter( folder + "/accel_data" + counter + ".csv");
             counter++;
         } catch (IOException e) {
             throw new RuntimeException(e);
