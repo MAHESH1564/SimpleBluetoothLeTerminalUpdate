@@ -54,7 +54,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     private boolean pendingNewline = false;
     private String newline = TextUtil.newline_crlf;
 
-    //private int counter = requireContext().fileList().length;
+    private int counter = 0;
 
     String test = null;
 
@@ -96,8 +96,8 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
             service.detach();
         super.onStop();
         try {
-            //accel_data.writeAll(accelerometerData);
             accel_data.close();
+            counter++;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -206,36 +206,39 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
      * Serial + UI
      */
     private void connect() {
-        boolean req=false;
-        //String folder_name = Environment.getExternalStorageDirectory().getPath() +"/train_data";
-         String folder_name = requireActivity().getExternalFilesDir(Environment.MEDIA_SHARED).getPath();
-        File  folder = new File(folder_name);
-        if(!folder.exists())
-             req = folder.mkdirs();
-        if(!req){
-            Toast.makeText(service, "The Storage location cannot be created the app might crash", Toast.LENGTH_SHORT).show();
-        }
-
-        FileWriter file;
-        int counter=Integer.parseInt(String.valueOf(Objects.requireNonNull(folder.listFiles()).length));
-        try {
-            file = new FileWriter( folder + "/accel_data" + counter + ".csv");
-            counter++;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        accel_data = new CSVWriter(file);
         try {
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             BluetoothDevice device = bluetoothAdapter.getRemoteDevice(deviceAddress);
             status("connecting...");
             connected = Connected.Pending;
             SerialSocket socket = new SerialSocket(requireActivity().getApplicationContext(), device);
+            createFile();
             service.connect(socket);
 
         } catch (Exception e) {
             onSerialConnectError(e);
         }
+    }
+
+    private void createFile() {
+        boolean req=false;
+        //String folder_name = Environment.getExternalStorageDirectory().getPath() +"/train_data";
+        String folder_name = requireActivity().getExternalFilesDir(Environment.MEDIA_SHARED).getPath();
+        File folder = new File(folder_name);
+        if(!folder.exists())
+            req = folder.mkdirs();
+        if(!req && !folder.exists()){
+            Toast.makeText(service, "The Storage location cannot be created the app might crash", Toast.LENGTH_SHORT).show();
+        }
+
+        FileWriter file;
+        counter=Integer.parseInt(String.valueOf(Objects.requireNonNull(folder.listFiles()).length));
+        try {
+            file = new FileWriter( folder + "/accel_data" + counter + ".csv");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        accel_data = new CSVWriter(file);
     }
 
     private void disconnect() {
@@ -293,19 +296,23 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
                     pendingNewline = msg.charAt(msg.length() - 1) == '\r';
                 }
                 spn.append(TextUtil.toCaretString(msg, newline.length() != 0));
-                if (msg.charAt(msg.length()-1)=='\n') {
-
-                    test = test.concat(msg);
-                    test = test.replace(TextUtil.newline_lf,".");
-                    accel_data.writeNext(new String[] {test});
-                    test = null;
-                }
-                else {
-                    test = (msg);
-                }
+                writeToCsv(msg);
             }
         }
         receiveText.append(spn);
+    }
+
+    private void writeToCsv(@NonNull String msg) {
+        if (msg.charAt(msg.length()-1)=='\n') {
+
+            test = test.concat(msg);
+            test = test.replace(TextUtil.newline_lf,"");
+            accel_data.writeNext(new String[] {test});
+            test = null;
+        }
+        else {
+            test = (msg);
+        }
     }
 
     private void status(String str) {

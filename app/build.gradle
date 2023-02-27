@@ -4,7 +4,7 @@ android {
     compileSdkVersion 33
     defaultConfig {
         targetSdkVersion 33
-        minSdkVersion 18
+        minSdkVersion 21
         vectorDrawables.useSupportLibrary true
 
         applicationId "de.kai_morich.simple_bluetooth_le_terminal"
