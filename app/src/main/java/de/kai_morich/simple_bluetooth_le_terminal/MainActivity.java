@@ -21,8 +21,6 @@ import java.util.Objects;
 public class MainActivity extends AppCompatActivity implements FragmentManager.OnBackStackChangedListener, ActivityCompat.OnRequestPermissionsResultCallback {
 
     private View mLayout;
-    private boolean readPermissionGranted = false;
-    private boolean writePermissionGranted= false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,11 +43,11 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 4) {
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Snackbar.make(mLayout, "Bluetooth permission granted",
+                Snackbar.make(mLayout, "Bluetooth turned on",
                                 Snackbar.LENGTH_SHORT)
                         .show();
             } else {
-                Snackbar.make(mLayout, "Bluetooth permission denied",
+                Snackbar.make(mLayout, "Bluetooth turned off",
                                 Snackbar.LENGTH_SHORT)
                         .show();
             }
@@ -63,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
                     Snackbar.LENGTH_INDEFINITE).setAction("OK", view -> {
                         // Request the permission
                         ActivityCompat.requestPermissions(MainActivity.this,
-                                new String[]{Manifest.permission.CAMERA},
+                                new String[]{Manifest.permission.BLUETOOTH_CONNECT},
                                 4);
                     }).show();
 
@@ -82,13 +80,13 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
         boolean hasWritePermission = ContextCompat.checkSelfPermission(
                 this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
         boolean minSDK29 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q;
-        readPermissionGranted = hasReadPermission;
-        writePermissionGranted = hasWritePermission;
-        ArrayList PermissionsTORequest = new ArrayList<String>();
-        if (!writePermissionGranted) {
+        if (minSDK29)
+            return;
+        ArrayList<String> PermissionsTORequest = new ArrayList<>();
+        if (!hasWritePermission) {
             PermissionsTORequest.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }
-        if (!readPermissionGranted) {
+        if (!hasReadPermission) {
             PermissionsTORequest.add(Manifest.permission.READ_EXTERNAL_STORAGE);
 
         }

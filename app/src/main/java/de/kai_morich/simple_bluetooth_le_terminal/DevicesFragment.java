@@ -313,8 +313,10 @@ public class DevicesFragment extends ListFragment {
         BluetoothDevice device = listItems.get(position-1);
         Bundle args = new Bundle();
         args.putString("device", device.getAddress());
-        Fragment fragment = new TerminalFragment();
+        Fragment txt = new InsertName(args);
+        requireFragmentManager().beginTransaction().replace(R.id.fragment, txt, "filename").addToBackStack(null).commit();
+        /*Fragment fragment = new TerminalFragment();
         fragment.setArguments(args);
-        requireFragmentManager().beginTransaction().replace(R.id.fragment, fragment, "terminal").addToBackStack(null).commit();
+        requireFragmentManager().beginTransaction().replace(R.id.fragment, fragment, "terminal").addToBackStack(null).commit();*/
     }
 }

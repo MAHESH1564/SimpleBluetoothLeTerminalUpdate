@@ -56,7 +56,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 
     private int counter = 0;
 
-    String test = null;
+    String towriteto = "";
 
     private CSVWriter accel_data = null;
 
@@ -224,11 +224,12 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         boolean req=false;
         //String folder_name = Environment.getExternalStorageDirectory().getPath() +"/train_data";
         String folder_name = requireActivity().getExternalFilesDir(Environment.MEDIA_SHARED).getPath();
-        File folder = new File(folder_name);
+        assert getArguments() != null;
+        File folder = new File(requireActivity().getExternalFilesDir(Environment.MEDIA_SHARED).getPath() + "/" + getArguments().getString("filename"));
         if(!folder.exists())
             req = folder.mkdirs();
         if(!req && !folder.exists()){
-            Toast.makeText(service, "The Storage location cannot be created the app might crash", Toast.LENGTH_SHORT).show();
+            Toast.makeText(service, "The storage location cannot be created. The app might crash", Toast.LENGTH_SHORT).show();
         }
 
         FileWriter file;
@@ -303,15 +304,11 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     }
 
     private void writeToCsv(@NonNull String msg) {
+        towriteto = towriteto.concat(msg);
+        towriteto = towriteto.replace(TextUtil.newline_lf,"");
+        accel_data.writeNext(new String[] {towriteto});
         if (msg.charAt(msg.length()-1)=='\n') {
-
-            test = test.concat(msg);
-            test = test.replace(TextUtil.newline_lf,"");
-            accel_data.writeNext(new String[] {test});
-            test = null;
-        }
-        else {
-            test = (msg);
+            towriteto = "";
         }
     }
 
