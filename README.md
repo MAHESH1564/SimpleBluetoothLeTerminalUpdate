@@ -20,7 +20,11 @@ Added functionalities
 
 The master branch only has the fixes to fit android 13 The other branches are used for active development, will be updated only after the testing.
 
-The Circuit_Python code folder manages the microcontroller code 
+The code.py  manages the microcontroller code 
  circuit python is a extended distribution of python intended for microcontrollers.
  Both team uses Adafruit's circuitplayground Bluefruit microcontroller board. 
+ 
+ This code in general collects the accelerometer and gyroscope data using I2C communication protocol and analog for proximity data
+ The module mpu6050 and the opto switch is sg-2bc 
+ then It sends it through BLE as UART packets one after the other when a device is connected.
 
