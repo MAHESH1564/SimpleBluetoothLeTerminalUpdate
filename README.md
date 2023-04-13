@@ -6,8 +6,8 @@ This is a fork of the simple bluetooth terminal app by kai morich we have update
 
 The app is designed to facilitate data collection for the two projects that is working with behavioral authentication. It designed such a way that due to the similarities in our project the data collection would take much more time if we are going to do it separately.
 
- 1 .Authentication using Motion Sensors.
- 2. Authentication using IR proximity sense
+ 1. Authentication using Motion Sensors.
+ 2. Authentication using IR proximity sense.
 
 The apps functionalities in general sense include
  1. Connecting to a BLE device and searching for various compatible ones.
