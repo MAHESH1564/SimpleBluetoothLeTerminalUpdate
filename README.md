@@ -27,4 +27,11 @@ The code.py  manages the microcontroller code
  1. This code in general collects the accelerometer and gyroscope data using I2C communication protocol and analog for proximity data
  2. The module mpu6050 and the opto switch is sg-2bc 
  3. Then It sends it through BLE as UART packets one after the other when a device is connected.
+It needs these libraries for it to work
+ - adafruit_ble
+ - adafruit_bluefruit_connect
+ - adafruit_bus_device
+ - adafruit_circuitplayground
+ - adafruit register
+ - adafruit mpu6050.mpy
 
