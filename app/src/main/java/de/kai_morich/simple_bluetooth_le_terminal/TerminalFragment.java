@@ -54,11 +54,14 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     private boolean pendingNewline = false;
     private String newline = TextUtil.newline_crlf;
 
-    private int counter = 0;
+    private int file_counter = 0;
+    private int towhichfile = 0;
 
     String towriteto = "";
 
     private CSVWriter accel_data = null;
+    private CSVWriter gyro_data = null;
+    private CSVWriter ir_data = null;
 
 
     /*
@@ -97,7 +100,8 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         super.onStop();
         try {
             accel_data.close();
-            counter++;
+            gyro_data.close();
+            ir_data.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -122,11 +126,11 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         if(initialStart && service != null) {
             initialStart = false;
             requireActivity().runOnUiThread(this::connect);
-            try {
+            /*try {
                 accel_data.close();
             } catch (IOException e) {
                 throw new RuntimeException(e);
-            }
+            }*/
         }
     }
 
@@ -223,7 +227,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     private void createFile() {
         boolean req=false;
         //String folder_name = Environment.getExternalStorageDirectory().getPath() +"/train_data";
-        String folder_name = requireActivity().getExternalFilesDir(Environment.MEDIA_SHARED).getPath();
+        //String folder_name = requireActivity().getExternalFilesDir(Environment.MEDIA_SHARED).getPath();
         assert getArguments() != null;
         File folder = new File(requireActivity().getExternalFilesDir(Environment.MEDIA_SHARED).getPath() + "/" + getArguments().getString("filename"));
         if(!folder.exists())
@@ -232,14 +236,18 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
             Toast.makeText(service, "The storage location cannot be created. The app might crash", Toast.LENGTH_SHORT).show();
         }
 
-        FileWriter file;
-        counter=Integer.parseInt(String.valueOf(Objects.requireNonNull(folder.listFiles()).length));
+        FileWriter accel,gyro,ir;
+        file_counter=Integer.parseInt(String.valueOf(Objects.requireNonNull(folder.listFiles()).length/3));
         try {
-            file = new FileWriter( folder + "/accel_data" + counter + ".csv");
+            accel = new FileWriter( folder + "/accel_data" + file_counter + ".csv");
+            gyro = new FileWriter( folder + "/gyro_data" + file_counter + ".csv");
+            ir = new FileWriter( folder + "/ir_data" + file_counter + ".csv");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        accel_data = new CSVWriter(file);
+        accel_data = new CSVWriter(accel, '\0','\0','\0',"");
+        gyro_data = new CSVWriter(gyro, '\0','\0','\0',"");
+        ir_data = new CSVWriter(ir, '\0','\0','\0',"");
     }
 
     private void disconnect() {
@@ -304,11 +312,25 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     }
 
     private void writeToCsv(@NonNull String msg) {
-        towriteto = towriteto.concat(msg);
-        towriteto = towriteto.replace(TextUtil.newline_lf,"");
-        accel_data.writeNext(new String[] {towriteto});
+        //towriteto = towriteto.replace(TextUtil.newline_lf,"");
+        /*accel_data.writeNext(new String[] {towriteto});
         if (msg.charAt(msg.length()-1)=='\n') {
             towriteto = "";
+        }*/
+        switch (towhichfile) {
+            case 0:
+                accel_data.writeNext(new String[]{msg});
+                break;
+            case 1:
+                gyro_data.writeNext(new String[]{msg});
+                break;
+            case 2:
+                ir_data.writeNext(new String[]{msg});
+                break;
+        }
+        char last = msg.charAt(msg.length()-1);
+        if (msg.charAt(msg.length() - 1) == '\n') {
+            towhichfile = (towhichfile + 1) % 3;
         }
     }
 
