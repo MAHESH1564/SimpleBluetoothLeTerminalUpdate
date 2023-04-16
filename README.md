@@ -1,4 +1,4 @@
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/3f9ba45b5c5449179150010659311f57)](https://www.codacy.com/manual/kai-morich/SimpleBluetoothLeTerminal?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=kai-morich/SimpleBluetoothLeTerminal&amp;utm_campaign=Badge_Grade)
+
 
 # SimpleBluetoothLeTerminalUpdated
 
@@ -11,8 +11,8 @@ The app is designed to facilitate data collection for the two projects that is w
 
 The apps functionalities in general sense include
  1. Connecting to a BLE device and searching for various compatible ones.
- 2. Ability to send and receive UART packets
- 3. It will be able to show the output in a general list form
+ 2. Ability to send and receive UART packets.
+ 3. It will be able to show the output in a general list form.
 Added functionalities
  1. A few depreciated libraries have been improved to give support till android 13.
  2. It will be able to manage and save them into the data folder of the app in a shared folder according to the users choices.
@@ -34,4 +34,21 @@ It needs these libraries for it to work
  - adafruit_circuitplayground
  - adafruit register
  - adafruit mpu6050.mpy
+
+General components used for Hardware Design is
+- adafruit circuitplayground bluefruit.
+
+![image](https://user-images.githubusercontent.com/69628550/232348364-b1b08e9a-7ccf-43e3-bf85-d44b5ca4aabb.png)
+
+- mpu 6050 6-axis IMU sensor board.
+
+![image](https://user-images.githubusercontent.com/69628550/232348646-d2487d63-a854-48c7-90de-b8471fd84af9.png)
+
+- Kodenshi SG-2BC opto switch.
+
+![image](https://user-images.githubusercontent.com/69628550/232348731-03e235e8-3d43-4cf9-bd5b-d20d7a982566.png)
+
+- An old headphone and earphone.
+
+
 
