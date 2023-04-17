@@ -31,11 +31,14 @@ import androidx.fragment.app.Fragment;
 
 import com.opencsv.CSVWriter;
 
+import org.apache.commons.lang3.time.StopWatch;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Objects;
+import java.util.Timer;
 
 public class TerminalFragment extends Fragment implements ServiceConnection, SerialListener {
 
@@ -57,13 +60,9 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     private int file_counter = 0;
     private int towhichfile = 0;
 
-    String towriteto = "";
-
     private CSVWriter accel_data = null;
     private CSVWriter gyro_data = null;
     private CSVWriter ir_data = null;
-
-
     /*
      * Lifecycle
      */
@@ -105,6 +104,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        send("stop");
     }
 
     @SuppressWarnings("deprecation") // onAttach(context) was added with API 23. onAttach(activity) works for all API versions
@@ -159,14 +159,10 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         receiveText.setTextColor(getResources().getColor(R.color.colorRecieveText)); // set as default color to reduce number of spans
         receiveText.setMovementMethod(ScrollingMovementMethod.getInstance());
 
-        sendText = view.findViewById(R.id.send_text);
-        hexWatcher = new TextUtil.HexWatcher(sendText);
-        hexWatcher.enable(hexEnabled);
-        sendText.addTextChangedListener(hexWatcher);
-        sendText.setHint(hexEnabled ? "HEX mode" : "");
-
-        View sendBtn = view.findViewById(R.id.send_btn);
-        sendBtn.setOnClickListener(v -> send(sendText.getText().toString()));
+        View startbtn = view.findViewById(R.id.startbtn);
+        View stopbtn = view.findViewById(R.id.stopbtn);
+        startbtn.setOnClickListener(v -> send("start"));
+        stopbtn.setOnClickListener(v -> send("stop"));
         return view;
     }
 
