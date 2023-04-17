@@ -50,5 +50,8 @@ General components used for Hardware Design is
 
 - An old headphone and earphone.
 
+Complete device
+
+![IMG_20230417_113316-removebg-preview(1)](https://user-images.githubusercontent.com/69628550/232400426-2ed90df1-c80d-47fd-b121-49e872cd82b0.png)
 
 
