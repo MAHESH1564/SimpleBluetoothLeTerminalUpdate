@@ -16,13 +16,13 @@ The repository is structured as follows:
 
 ## Android Development
 
-The `Android_Development` folder contains the Android app responsible for collecting data from smartphone sensors. The app interacts with the user, collects sensor readings, and sends the data to the microcontroller via Bluetooth Low Energy (BLE). The collected data is used for training and testing the machine learning model.
+The Android Development folder contains the Android app responsible for collecting data from smartphone sensors. The app interacts with the user and establishes a Bluetooth Low Energy (BLE) connection with the microcontroller. The app receives sensor data from the microcontroller, specifically the MPU-6050, and saves it as CSV files on the smartphone. The collected sensor data is crucial for training and testing the machine learning model used in the authentication process.
 
 ## Microcontroller
 
-The `Microcontroller` folder includes the `code.py` file, which manages the microcontroller code written in CircuitPython. The microcontroller collects data from the MPU-6050, a 6-axis IMU sensor, and sends it to the smartphone through Bluetooth. The data is transmitted in real-time and saved as CSV files on the smartphone.
+The Microcontroller folder includes the `code.py` file, which manages the microcontroller code written in CircuitPython. The microcontroller is connected to the MPU-6050, a 6-axis IMU sensor, which captures accelerometer and gyroscope data. The microcontroller communicates with the Android app over BLE, sending the sensor data packets to the app. The data is transmitted in real-time and is saved on the smartphone as separate CSV files for further processing and analysis.
 
-This setup allows for efficient data collection from the microcontroller connected to the MPU-6050 sensor. The data is then passed to the smartphone app via Bluetooth and stored in CSV format for further analysis and processing.
+This data flow enables seamless data collection from the microcontroller, transmission to the smartphone app via Bluetooth, and storage as CSV files, providing a streamlined approach to gather sensor data for subsequent machine learning-based authentication.
 
 ## Machine Learning
 
