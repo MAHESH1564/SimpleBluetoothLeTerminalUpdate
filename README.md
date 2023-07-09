@@ -66,9 +66,6 @@ Please refer to the specific component folders for further details and ongoing d
 - MPU6050 6-axis IMU sensor board.  
   ![MPU6050 6-axis IMU Sensor Board](https://user-images.githubusercontent.com/69628550/232348646-d2487d63-a854-48c7-90de-b8471fd84af9.png)
 
-- Kodenshi SG-2BC opto switch.  
-  ![Kodenshi SG-2BC Opto Switch](https://user-images.githubusercontent.com/69628550/232348731-03e235e8-3d43-4cf9-bd5b-d20d7a982566.png)
-
 - An old headphone and earphone.
 
 ## Complete Device
