@@ -16,11 +16,13 @@ The repository is structured as follows:
 
 ## Android Development
 
-The Android_Development folder contains the Android app responsible for collecting data from smartphone sensors. The app interacts with the user, collects sensor readings, and sends the data to the microcontroller via Bluetooth Low Energy (BLE). The collected data is used for training and testing the machine learning model.
+The `Android_Development` folder contains the Android app responsible for collecting data from smartphone sensors. The app interacts with the user, collects sensor readings, and sends the data to the microcontroller via Bluetooth Low Energy (BLE). The collected data is used for training and testing the machine learning model.
 
 ## Microcontroller
 
-The Microcontroller folder includes the `code.py` file, which manages the microcontroller code written in CircuitPython. The microcontroller communicates with the smartphone app over BLE, receives sensor data, and processes it before transmitting it to the machine learning component for authentication.
+The `Microcontroller` folder includes the `code.py` file, which manages the microcontroller code written in CircuitPython. The microcontroller collects data from the MPU-6050, a 6-axis IMU sensor, and sends it to the smartphone through Bluetooth. The data is transmitted in real-time and saved as CSV files on the smartphone.
+
+This setup allows for efficient data collection from the microcontroller connected to the MPU-6050 sensor. The data is then passed to the smartphone app via Bluetooth and stored in CSV format for further analysis and processing.
 
 ## Machine Learning
 
